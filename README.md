@@ -1,2 +1,2 @@
-# carpredict
+# health predict
 regresi linier
