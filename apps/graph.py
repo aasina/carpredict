@@ -1,21 +1,35 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn import datasets
 
 
 def app():
-    st.title('Data')
+    #judul
+    st.title('Grafik Representasi')
 
-    st.write("This is the `Data` page of the multi-page app.")
+    st.write("Pada halaman ini kita akan menampilkan data terkait dataset yang sudah dipersiapkan.")
 
-    st.write("The following is the DataFrame of the `iris` dataset.")
+    #import dataset
+    datacovid = pd.read_csv('datasetcovidsamplejkt.csv')
+    
+    #show sample dataset
+    sample_data = datacovid.sample(5)
+    st.write("""
+    ### 1. Sample Dataset
 
-    iris = datasets.load_iris()
-    X = pd.DataFrame(iris.data, columns=iris.feature_names)
-    Y = pd.Series(iris.target, name='class')
-    df = pd.concat([X, Y], axis=1)
-    df['class'] = df['class'].map(
-        {0: "setosa", 1: "versicolor", 2: "virginica"})
+    Berikut ini adalah sampel dataset dan nama-nama features nya.""")
 
-    st.write(df)
+    st.dataframe(sample_data)
+
+    #box plot by type of variant
+    st.write("""
+    ### 2. Boxplot terhadap tipe variant
+
+    """)
+    
+    fig = sns.boxplot(x="Variant_Suspect", y="JKT_DAILY_DEATH", data=datacovid)
+    
+    st.pyplot(fig)
