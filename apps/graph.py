@@ -8,7 +8,7 @@ from sklearn import datasets
 
 def app():
     #judul
-    st.title('Grafik Representasi')
+    st.title('Presentasi Grafik')
 
     st.write("Pada halaman ini kita akan menampilkan data terkait dataset yang sudah dipersiapkan.")
 
@@ -30,6 +30,96 @@ def app():
 
     """)
     
-    fig = sns.boxplot(x="Variant_Suspect", y="JKT_DAILY_DEATH", data=datacovid)
+    fig1 = plt.figure(figsize=(8, 6))
+    plt.title("Box Plot Covid Variant di Jakarta")
+    sns.boxplot(x="Variant_Suspect", y="JKT_DAILY_DEATH", data=datacovid)
+    st.pyplot(fig1)
+
+    #count of calculated risk by type of variant
+    st.write("""
+    ### 3. Countplot kalkulasi risiko berdasarkan tipe variant
+
+    """)
+    fig2 = plt.figure(figsize=(8, 6))
+    plt.title("Countplot Kalkukasi Risiko pada tiap Variant")
+    sns.countplot(x="Variant_Suspect", hue="Risk_Criteria", data=datacovid)
+    st.pyplot(fig2)
+
+    #pair plot of covid JKT
+
+    covid_JKT = datacovid.loc[:,['Variant_Suspect','Day','JKT_DAILY_POSITIVE','JKT_DAILY_DEATH','JKT_DAILY_HOSPITALIZED','JKT_DAILY_POSTRATE','JKT_DAILY_TESTSPECIMENT','Risk','Risk_Criteria']]
     
-    st.pyplot(fig)
+    st.write("""
+    ### 4. Pair Plot terhadap variabel dari data covid 19
+
+    """)
+    plt.title("Pairplot C19 di Jakarta")
+    fig3 = sns.pairplot(covid_JKT,hue='Variant_Suspect')
+    st.pyplot(fig3)
+
+    #prepare data for graph.
+
+    covid_ABG = datacovid.loc[datacovid.Variant_Suspect=='Alpha-Beta-Gamma',['Day','JKT_DAILY_POSITIVE','JKT_DAILY_DEATH','JKT_DAILY_HOSPITALIZED','JKT_DAILY_POSTRATE','JKT_DAILY_TESTSPECIMENT','Risk','Risk_Criteria']]
+    covid_Delta = datacovid.loc[datacovid.Variant_Suspect=='Delta',['Day','JKT_DAILY_POSITIVE','JKT_DAILY_DEATH','JKT_DAILY_HOSPITALIZED','JKT_DAILY_POSTRATE','JKT_DAILY_TESTSPECIMENT','Risk','Risk_Criteria']]
+    covid_Omicron = datacovid.loc[datacovid.Variant_Suspect=='Omicron',['Day','JKT_DAILY_POSITIVE','JKT_DAILY_DEATH','JKT_DAILY_HOSPITALIZED','JKT_DAILY_POSTRATE','JKT_DAILY_TESTSPECIMENT','Risk','Risk_Criteria']]
+    
+    #Plot
+    y1 = covid_ABG.JKT_DAILY_POSITIVE
+    y2 = covid_Delta.JKT_DAILY_POSITIVE
+    y3 = covid_Omicron.JKT_DAILY_POSITIVE
+
+    x1 = covid_ABG.Day
+    x2 = covid_Delta.Day
+    x3 = covid_Omicron.Day
+
+    st.write("""
+    ### 5. Histogram kasus infeksi variant covid terhadap waktu
+
+    """)
+
+    fig4 = plt.figure(figsize=(8, 6))
+    plt.plot(x1,y1,'--r',label="Daily Alpha-Beta-Gamma")
+    plt.plot(x2,y2,'-.b',label="Daily Delta")
+    plt.plot(x3,y3,'g', label="Daily Omicron")
+    plt.xlabel('Day#')
+    plt.ylabel('People Positive Covid')
+    plt.legend()
+    st.pyplot(fig4)
+
+    #Data correlation.
+    corrdata_ABG = covid_ABG.corr()
+
+    st.write("""
+    ### 6. Histogram kasus infeksi variant covid terhadap waktu
+
+    6.1 Nilai korelasi parameter pada variant Alpha, Beta & Gamma
+    
+    """)
+
+    fig5 = plt.figure(figsize=(8, 6))
+    sns.heatmap(corrdata_ABG, annot=True)
+    st.pyplot(fig5)
+
+    #variant delta
+    corrdata_Delta = covid_Delta.corr()
+
+    st.write("""
+    6.2 Nilai korelasi parameter pada variant Delta
+
+    """)
+
+    fig6 = plt.figure(figsize=(8, 6))
+    sns.heatmap(corrdata_Delta, annot=True)
+    st.pyplot(fig6)
+
+    #variant Omicron
+    corrdata_Omicron = covid_Omicron.corr()
+
+    st.write("""
+    6.2 Nilai korelasi parameter pada variant Omicron
+
+    """)
+
+    fig7 = plt.figure(figsize=(8, 6))
+    sns.heatmap(corrdata_Delta, annot=True)
+    st.pyplot(fig7)
