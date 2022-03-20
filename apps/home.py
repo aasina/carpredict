@@ -8,7 +8,9 @@ def app():
     st.title("Home")
 
     st.header(
-        "Pengolahan Data Covid 19 Data Rekapitulasi and Prediction - Study Case DKI Jakarta"
+        """
+        Data Rekapitulasi dan Prediksi - Studi Kasus Covid-19 DKI Jakarta
+    """
     )
 
     st.subheader("Disclaimer")
@@ -24,7 +26,7 @@ def app():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Tentang Web")
+        st.subheader("Read Me")
         with st.expander(""):
             st.write(
                 """
@@ -47,11 +49,13 @@ def app():
 
             """
             )
-
-    st.image(image, caption="3 x 3 Risk Model Assumption")
+    with st.container():
+        st.subheader("Risk Matrix")
+        with st.expander(""):
+            st.image(image, caption="Risk Model 3X3s")
 
     st.subheader("Referensi")
-    with st.expander("Referensi"):
+    with st.expander(""):
         st.write(
             """
             1. Streamlit multi-page app menggunakan [streamlit-multiapps](https://github.com/upraneelnihar/streamlit-multiapps) framework dikembangkan oleh [Praneel Nihar](https://medium.com/@u.praneel.nihar). Lampiran [Medium article](https://medium.com/@u.praneel.nihar/building-multi-page-web-app-using-streamlit-7a40d55fa5b4).
