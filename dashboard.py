@@ -16,6 +16,10 @@ ydaydeathid = dataset.ID_DAILY_DEATH
 ydaydeathjkt = dataset.JKT_DAILY_DEATH
 xdaily = dataset.Tanggal
 
+sidebar = st.sidebar
+
+
+
 #create first line
 with st.container():
     col1, col2 = st.columns(2)
@@ -31,6 +35,7 @@ with st.container():
         st.pyplot(fig1)
 
     with col2:
+        st.write('test')
         fig2 = plt.figure()
         plt.plot(xdaily,ydaydeathid,'g',label="Meninggal Harian Indonesia")
         plt.plot(xdaily,ydaydeathjkt,'y',label="Meninggal Harian DKI Jakarta")
