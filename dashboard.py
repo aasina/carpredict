@@ -16,11 +16,12 @@ ydaydeathid = dataset.ID_DAILY_DEATH
 ydaydeathjkt = dataset.JKT_DAILY_DEATH
 xdaily = dataset.Tanggal
 
-sidebar = st.sidebar
-
-
+st.sidebar.text('Testing')
 
 #create first line
+with st.container():
+    st.title('Dashboard Rekapitulasi Data Covid')
+
 with st.container():
     col1, col2 = st.columns(2)
 
@@ -28,18 +29,20 @@ with st.container():
         fig1 = plt.figure()
         plt.plot(xdaily,ydayposid,'r',label="Positive Harian Indonesia")
         plt.plot(xdaily,ydayposjkt,'b',label="Positif Harian DKI Jakarta")
-        plt.xticks([1,150,300,450,600,730])
+        plt.xticks([1,150,300,450,600,730], fontsize=6)
+        plt.yticks(fontsize=6)
         plt.xlabel('Tanggal')
         plt.ylabel('Jumlah Positif Harian')
-        plt.legend()
+        plt.legend(fontsize=8)
         st.pyplot(fig1)
 
     with col2:
-        st.write('test')
         fig2 = plt.figure()
         plt.plot(xdaily,ydaydeathid,'g',label="Meninggal Harian Indonesia")
         plt.plot(xdaily,ydaydeathjkt,'y',label="Meninggal Harian DKI Jakarta")
+        plt.xticks([1,150,300,450,600,730], fontsize=6)
+        plt.yticks(fontsize=6)
         plt.xlabel('Tanggal')
         plt.ylabel('Jumlah Meninggal Harian')
-        plt.legend()
+        plt.legend(fontsize=8)
         st.pyplot(fig2)
