@@ -1,4 +1,8 @@
 {
     "python.formatting.provider": "black",
+<<<<<<< HEAD
     "python.pythonPath": "C:\\Users\\msulaeman\\Miniconda3\\envs\\sandboxML\\python.exe"
+=======
+    "python.pythonPath": "/home/ubuntu/miniconda3/bin/python"
+>>>>>>> fcd6c4d448804b810706258d9e1322da0993d917
 }
