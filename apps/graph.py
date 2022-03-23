@@ -3,27 +3,49 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import datetime
 from sklearn import datasets
 
+xdate 
 
 def app():
     #judul
-    st.title('Presentasi Grafik')
-
-    st.write("Pada halaman ini kita akan menampilkan data terkait dataset yang sudah dipersiapkan.")
+    st.title("Dashboard Rekapitulasi Data Covid")
 
     #import dataset
     datacovid = pd.read_csv('datasetcovidsamplejkt.csv')
+
+    ydayposid = datacovid.ID_DAILY_POSITIVE
+    ydayposjkt = datacovid.JKT_DAILY_POSITIVE
+    ydaydeathid = datacovid.ID_DAILY_DEATH
+    ydaydeathjkt = datacovid.JKT_DAILY_DEATH
+    xdaily = datacovid.Tanggal
+
+    with st.container():
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            fig1 = plt.figure()
+            plt.scatter(xdaily, ydayposid, "r", label="Positive Harian Indonesia")
+            plt.scatter(xdaily, ydayposjkt, "b", label="Positif Harian DKI Jakarta")
+            plt.xticks([1, 150, 300, 450, 600, 730], fontsize=6)
+            plt.yticks(fontsize=6)
+            plt.xlabel("Tanggal")
+            plt.ylabel("Jumlah Positif Harian")
+            plt.legend(fontsize=8)
+            st.pyplot(fig1)
+
+        with col2:
+            fig2 = plt.figure()
+            plt.plot(xdaily, ydaydeathid, "g", label="Meninggal Harian Indonesia")
+            plt.plot(xdaily, ydaydeathjkt, "y", label="Meninggal Harian DKI Jakarta")
+            plt.xticks([1, 150, 300, 450, 600, 730], fontsize=6)
+            plt.yticks(fontsize=6)
+            plt.xlabel("Tanggal")
+            plt.ylabel("Jumlah Meninggal Harian")
+            plt.legend(fontsize=8)
+            st.pyplot(fig2)
     
-    #show sample dataset
-    sample_data = datacovid.sample(5)
-    st.write("""
-    ### 1. Sample Dataset
-
-    Berikut ini adalah sampel dataset dan nama-nama features nya.""")
-
-    st.dataframe(sample_data)
-
     #box plot by type of variant
     st.write("""
     ### 2. Boxplot terhadap tipe variant
