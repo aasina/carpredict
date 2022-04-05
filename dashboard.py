@@ -1,8 +1,11 @@
+from tkinter import Y
 import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.figure_factory as ff
+import plotly.express as px
 
 # set wide page layout
 st.set_page_config(layout="wide")
@@ -17,14 +20,14 @@ ydaydeathjkt = dataset.JKT_DAILY_DEATH
 xdaily = dataset.Tanggal
 
 # sidebar
-st.sidebar.text("Testing")
+#st.sidebar.text("Testing")
 
 # create first line
 with st.container():
     st.title("Dashboard Rekapitulasi Data Covid")
 
 with st.container():
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns(2)
 
     with col1:
         fig1 = plt.figure()
@@ -37,6 +40,7 @@ with st.container():
         plt.legend(fontsize=8)
         st.pyplot(fig1)
 
+        
     with col2:
         fig2 = plt.figure()
         plt.plot(xdaily, ydaydeathid, "g", label="Meninggal Harian Indonesia")
@@ -47,3 +51,15 @@ with st.container():
         plt.ylabel("Jumlah Meninggal Harian")
         plt.legend(fontsize=8)
         st.pyplot(fig2)
+
+        
+fig3 = px.scatter(dataset, x="Day", y="JKT_DAILY_POSITIVE", color="Variant_Suspect")
+
+fig3.update_layout(legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.7,
+))
+
+st.plotly_chart(fig3, use_container_width=True)
