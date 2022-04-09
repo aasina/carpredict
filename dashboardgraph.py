@@ -61,13 +61,50 @@ with st.container():
         # plt.grid(True)
         st.pyplot(fig1)
 
+        st.write("""
+
+        """)
+
         # grafik Perawatan
-        fig2 = plt.figure(figsize=(4, 3))
+        fig2 = plt.figure(figsize=(4, 2))
         color = 'tab:green'
         plt.title('Pasien Rawat Harian', fontsize=10)
-        plt.bar(x, value3, color=color)
+        plt.plot(x, value3, color=color)
         plt.tick_params(axis='y', labelcolor=color)
         plt.xticks(fontsize=sizefont)
         plt.yticks(fontsize=sizefont)
         # plt.grid(True)
         st.pyplot(fig2)
+
+with st.container():
+    col1, col2 = st.columns(2)
+
+    with col1:
+        fig3 = px.area(datacovid, x="Day", y="JKT_DAILY_POSITIVE", color="Variant_Suspect")
+
+        fig3.update_layout(legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.65
+        ))
+
+        # Plot!
+        st.plotly_chart(fig3, use_container_width=True)
+
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+fig4 = make_subplots(rows=1, cols=2)
+
+fig4.add_trace(
+    go.Scatter(x=[1, 2, 3], y=[4, 5, 6]),
+    row=1, col=1
+)
+
+fig4.addtrace(
+    go.Scatter(x=[20, 30, 40], y=[50, 60, 70]),
+    row=1, col=2
+)
+
+fig.update_layout(height=600, width=800, title_text="Side By Side Subplots")
