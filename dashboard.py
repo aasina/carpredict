@@ -1,4 +1,4 @@
-from tkinter import Y
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -10,7 +10,8 @@ import plotly.express as px
 # set wide page layout
 st.set_page_config(layout="wide")
 
-# Import Dataset
+# Import 
+datacovid = pd.read_excel('datasetcovidjktid.xlsx')
 dataset = pd.read_csv("datasetcovidsamplejkt.csv")
 
 ydayposid = dataset.ID_DAILY_POSITIVE
