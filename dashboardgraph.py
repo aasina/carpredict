@@ -14,97 +14,107 @@ datacovid = pd.read_excel('datasetcovidjktid.xlsx')
 
 # add title
 with st.container():
-    st.title("Dashboard Rekapitulasi Data Covid 19")
+    st.title("DASHBOARD COVID 19 - CASE STUDY DKI JAKARTA")
+
+# Opening Summary
+with st.container():
+    st.header('DATA SUMMARY')
+    col1, col2, col3, col4, col5 = st.columns(5)
+
+    # summary
+    with col1:
+        st.write('#### Type of Variant:')
+        st.write("""
+        1. Alpha - Beta - Gamma (First Wave)
+        2. Delta (Second Wave)
+        3. Omicron (Third Wave)
+        """)
+
+    with col2:
+        st.write('#### Initial Observation Date:')
+        # get first row data from Tanggal column
+        startdate = datacovid['Tanggal'].iloc[0]
+        st.write(startdate.strftime('%d-%m-%Y'))
+        st.write('#### Last Observation Date:')
+        totalobsday = len(datacovid.Tanggal)  # total observation day
+        # get last row data from Tanggal column
+        lastdate = datacovid['Tanggal'].iloc[totalobsday-1]
+        st.write(lastdate.strftime('%d-%m-%Y'))
+
+    with col3:
+        st.write('#### Total Tested:')
+        st.write("{:,.0f}".format(datacovid.JKT_DAILY_TESTED.sum()))
+        st.write('#### Highest Positivity Rate:')
+        st.write("{:.2f}".format(datacovid.JKT_DAILY_POSTRATE.max()))
+
+    with col4:
+        st.write('#### Total Positive Case:')
+        st.write("{:,}".format(datacovid.JKT_DAILY_POSITIVE.sum()))
+        st.write('#### Highest Daily Positive Case:')
+        st.write("{:,}".format(datacovid.JKT_DAILY_POSITIVE.max()))
+
+    with col5:
+        st.write('#### Total Death Case:')
+        st.write("{:,}".format(datacovid.JKT_DAILY_DEATH.sum()))
+        st.write('#### Highest Daily Death Case:')
+        st.write("{:,}".format(datacovid.JKT_DAILY_DEATH.max()))
 
 with st.container():
-    col1, col2 = st.columns([2, 1])
+    st.header('TIMELINE CURVE')
+    st.write('#### Type of Variant:')
+    st.write("""
+    1. Alpha - Beta - Gamma (First Wave)
+    2. Delta (Second Wave)
+    3. Omicron (Third Wave)
+    """)
+
+    col1, col2 = st.columns(2)
     # define value of X and Y
     x = datacovid.Tanggal
     value1 = datacovid.JKT_DAILY_POSITIVE
     value2 = datacovid.JKT_DAILY_DEATH
     value3 = datacovid.JKT_DAILY_HOSPITALIZED
+    sizefont = 5
 
     with col1:
-        # define value of X and Y
-        x = datacovid.Tanggal
-        value1 = datacovid.JKT_DAILY_POSITIVE
-        value2 = datacovid.JKT_DAILY_DEATH
+        # Historical Graphic
+        histselect = st.selectbox(
+            'Please select data label',
+            ('Positive Case', 'Death Case', 'Hospitalized Case')
+        )
 
-        sizefont = 5
+        if histselect == 'Positive Case':
+            colorgraph = 'tab:red'
+            yvalue = value1
+            labely = 'Daily Positive'
+        elif histselect == 'Death Case':
+            colorgraph = 'tab:blue'
+            yvalue = value2
+            labely = 'Daily Death'
+        else:
+            colorgraph = 'tab:green'
+            yvalue = value3
+            labely = 'Daily Hospitalized'
 
         fig1 = plt.figure(figsize=(4, 3))
+        color = colorgraph
+        plt.title('Historical Timeline', fontsize=6)
+        plt.xlabel('Date', fontsize=sizefont)
+        plt.ylabel('labely', color=colorgraph, fontsize=sizefont)
+        plt.fill_between(x, yvalue, color=color)
+        plt.tick_params(axis='y', labelcolor=color)
+        plt.xticks(fontsize=sizefont)
+        plt.yticks(fontsize=sizefont)
+        st.pyplot(fig1)
+
+    with col2:
+        fig2 = plt.figure(figsize=(4, 3))
         color = 'tab:red'
-        plt.title('Data Positif Harian', fontsize=6)
-        plt.xlabel('Tanggal', fontsize=sizefont)
+        plt.title('Variant Historical Timeline', fontsize=6)
+        plt.xlabel('Day', fontsize=sizefont)
         plt.ylabel('Positif Harian', color=color, fontsize=sizefont)
         plt.fill_between(x, value1, color=color)
         plt.tick_params(axis='y', labelcolor=color)
         plt.xticks(fontsize=sizefont)
         plt.yticks(fontsize=sizefont)
-        plt.grid(True)
-        st.pyplot(fig1)
-
-    with col2:
-        # kosong
-        st.write("""
-
-        """)
-
-        # Grafik Meninggal
-        fig1 = plt.figure(figsize=(4, 2))
-        color = 'tab:blue'
-        plt.title('Meninggal Harian', fontsize=10)
-        plt.plot(x, value2, color=color)
-        plt.tick_params(axis='y', labelcolor=color)
-        plt.xticks(fontsize=sizefont)
-        plt.yticks(fontsize=sizefont)
-        # plt.grid(True)
-        st.pyplot(fig1)
-
-        st.write("""
-
-        """)
-
-        # grafik Perawatan
-        fig2 = plt.figure(figsize=(4, 2))
-        color = 'tab:green'
-        plt.title('Pasien Rawat Harian', fontsize=10)
-        plt.plot(x, value3, color=color)
-        plt.tick_params(axis='y', labelcolor=color)
-        plt.xticks(fontsize=sizefont)
-        plt.yticks(fontsize=sizefont)
-        # plt.grid(True)
         st.pyplot(fig2)
-
-with st.container():
-    col1, col2 = st.columns(2)
-
-    with col1:
-        fig3 = px.area(datacovid, x="Day", y="JKT_DAILY_POSITIVE", color="Variant_Suspect")
-
-        fig3.update_layout(legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=0.65
-        ))
-
-        # Plot!
-        st.plotly_chart(fig3, use_container_width=True)
-
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-
-fig4 = make_subplots(rows=1, cols=2)
-
-fig4.add_trace(
-    go.Scatter(x=[1, 2, 3], y=[4, 5, 6]),
-    row=1, col=1
-)
-
-fig4.addtrace(
-    go.Scatter(x=[20, 30, 40], y=[50, 60, 70]),
-    row=1, col=2
-)
-
-fig.update_layout(height=600, width=800, title_text="Side By Side Subplots")
