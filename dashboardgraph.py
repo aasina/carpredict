@@ -19,17 +19,9 @@ with st.container():
 # Opening Summary
 with st.container():
     st.header('DATA SUMMARY')
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col2, col3, col4, col5 = st.columns(4)
 
     # summary
-    with col1:
-        st.write('#### Type of Variant:')
-        st.write("""
-        1. Alpha - Beta - Gamma (First Wave)
-        2. Delta (Second Wave)
-        3. Omicron (Third Wave)
-        """)
-
     with col2:
         st.write('#### Initial Observation Date:')
         # get first row data from Tanggal column
@@ -68,6 +60,7 @@ with st.container():
     3. Omicron (Third Wave)
     """)
 
+    # create column formatting
     col1, col2 = st.columns(2)
     # define value of X and Y
     x = datacovid.Tanggal
@@ -76,13 +69,23 @@ with st.container():
     value3 = datacovid.JKT_DAILY_HOSPITALIZED
     sizefont = 5
 
+    covid_ABG = datacovid.loc[datacovid.Variant_Suspect == 'Alpha-Beta-Gamma', [
+        'Day', 'JKT_DAILY_POSITIVE', 'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED']]
+    covid_Delta = datacovid.loc[datacovid.Variant_Suspect == 'Delta', [
+        'Day', 'JKT_DAILY_POSITIVE', 'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED']]
+    covid_Omicron = datacovid.loc[datacovid.Variant_Suspect == 'Omicron', [
+        'Day', 'JKT_DAILY_POSITIVE', 'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED']]
+
     with col1:
-        # Historical Graphic
+        # This column is for historical Graphic
+
+        # create selectbox
         histselect = st.selectbox(
             'Please select data label',
             ('Positive Case', 'Death Case', 'Hospitalized Case')
         )
 
+        # create parameter from selectbox
         if histselect == 'Positive Case':
             colorgraph = 'tab:red'
             yvalue = value1
@@ -108,13 +111,40 @@ with st.container():
         st.pyplot(fig1)
 
     with col2:
+        varselect = st.selectbox(
+            'Please select data label',
+            ('Positive', 'Death', 'Hospitalized')
+        )
+
+        if varselect == 'Positive':
+            y1 = covid_ABG.JKT_DAILY_POSITIVE
+            y2 = covid_Delta.JKT_DAILY_POSITIVE
+            y3 = covid_Omicron.JKT_DAILY_POSITIVE
+            labely = 'Daily Positive'
+        elif varselect == 'Death':
+            y1 = covid_ABG.JKT_DAILY_DEATH
+            y2 = covid_Delta.JKT_DAILY_DEATH
+            y3 = covid_Omicron.JKT_DAILY_DEATH
+            labely = 'Daily Death'
+        else:
+            y1 = covid_ABG.JKT_DAILY_HOSPITALIZED
+            y2 = covid_Delta.JKT_DAILY_HOSPITALIZED
+            y3 = covid_Omicron.JKT_DAILY_HOSPITALIZED
+            labely = 'Daily Hospitalized'
+
+        x1 = covid_ABG.Day
+        x2 = covid_Delta.Day
+        x3 = covid_Omicron.Day
+
         fig2 = plt.figure(figsize=(4, 3))
-        color = 'tab:red'
-        plt.title('Variant Historical Timeline', fontsize=6)
+        plt.title('Variant Observation', fontsize=6)
+        plt.plot(x1, y1, '-r', label="Daily Alpha-Beta-Gamma", alpha=1 ,linewidth=1)
+        plt.plot(x2, y2, '-b', label="Daily Delta", alpha=1, linewidth=1)
+        plt.plot(x3, y3, '-g', label="Daily Omicron", alpha=1, linewidth=1)
         plt.xlabel('Day', fontsize=sizefont)
-        plt.ylabel('Positif Harian', color=color, fontsize=sizefont)
-        plt.fill_between(x, value1, color=color)
-        plt.tick_params(axis='y', labelcolor=color)
+        plt.ylabel(labely, fontsize=sizefont)
+        plt.legend(fontsize=sizefont)
         plt.xticks(fontsize=sizefont)
         plt.yticks(fontsize=sizefont)
         st.pyplot(fig2)
+
