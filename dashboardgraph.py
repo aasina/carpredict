@@ -12,7 +12,15 @@ st.set_page_config(layout="wide")
 # Import dataset
 datacovid = pd.read_excel('datasetcovidjktid.xlsx')
 
-# add title
+# Dataset selection
+covid_ABG = datacovid.loc[datacovid.Variant_Suspect == 'Alpha-Beta-Gamma', ['Day', 'JKT_DAILY_POSITIVE',
+                                                                            'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED', 'JKT_DAILY_POSTRATE', 'JKT_DAILY_TESTED', 'Risk', 'Risk_Criteria']]
+covid_Delta = datacovid.loc[datacovid.Variant_Suspect == 'Delta', ['Day', 'JKT_DAILY_POSITIVE',
+                                                                   'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED', 'JKT_DAILY_POSTRATE', 'JKT_DAILY_TESTED', 'Risk', 'Risk_Criteria']]
+covid_Omicron = datacovid.loc[datacovid.Variant_Suspect == 'Omicron', ['Day', 'JKT_DAILY_POSITIVE',
+                                                                       'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED', 'JKT_DAILY_POSTRATE', 'JKT_DAILY_TESTED', 'Risk', 'Risk_Criteria']]
+
+# Title
 with st.container():
     st.title("DASHBOARD COVID 19 - CASE STUDY DKI JAKARTA")
 
@@ -51,13 +59,16 @@ with st.container():
         st.write('#### Highest Daily Death Case:')
         st.write("{:,}".format(datacovid.JKT_DAILY_DEATH.max()))
 
+# Historical Timeline Graph
 with st.container():
     st.header('TIMELINE CURVE')
-    st.write('#### Type of Variant:')
+    st.write('#### Type of Covid-19 Variant:')
     st.write("""
     1. Alpha - Beta - Gamma (First Wave)
     2. Delta (Second Wave)
     3. Omicron (Third Wave)
+
+    Above variant is considered as Variant of Concern (VOC) as per WHO.
     """)
 
     # create column formatting
@@ -69,19 +80,12 @@ with st.container():
     value3 = datacovid.JKT_DAILY_HOSPITALIZED
     sizefont = 5
 
-    covid_ABG = datacovid.loc[datacovid.Variant_Suspect == 'Alpha-Beta-Gamma', [
-        'Day', 'JKT_DAILY_POSITIVE', 'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED']]
-    covid_Delta = datacovid.loc[datacovid.Variant_Suspect == 'Delta', [
-        'Day', 'JKT_DAILY_POSITIVE', 'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED']]
-    covid_Omicron = datacovid.loc[datacovid.Variant_Suspect == 'Omicron', [
-        'Day', 'JKT_DAILY_POSITIVE', 'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED']]
-
     with col1:
         # This column is for historical Graphic
 
         # create selectbox
         histselect = st.selectbox(
-            'Please select data label',
+            'Please select data label for timeline data',
             ('Positive Case', 'Death Case', 'Hospitalized Case')
         )
 
@@ -103,25 +107,25 @@ with st.container():
         color = colorgraph
         plt.title('Historical Timeline', fontsize=6)
         plt.xlabel('Date', fontsize=sizefont)
-        plt.ylabel('labely', color=colorgraph, fontsize=sizefont)
+        plt.ylabel(labely, fontsize=sizefont)
         plt.fill_between(x, yvalue, color=color)
-        plt.tick_params(axis='y', labelcolor=color)
+        plt.tick_params(axis='y')
         plt.xticks(fontsize=sizefont)
         plt.yticks(fontsize=sizefont)
         st.pyplot(fig1)
 
     with col2:
         varselect = st.selectbox(
-            'Please select data label',
-            ('Positive', 'Death', 'Hospitalized')
+            'Please select data label comparison of each variant',
+            ('Positive Case', 'Death Case', 'Hospitalized Case')
         )
 
-        if varselect == 'Positive':
+        if varselect == 'Positive Case':
             y1 = covid_ABG.JKT_DAILY_POSITIVE
             y2 = covid_Delta.JKT_DAILY_POSITIVE
             y3 = covid_Omicron.JKT_DAILY_POSITIVE
             labely = 'Daily Positive'
-        elif varselect == 'Death':
+        elif varselect == 'Death Case':
             y1 = covid_ABG.JKT_DAILY_DEATH
             y2 = covid_Delta.JKT_DAILY_DEATH
             y3 = covid_Omicron.JKT_DAILY_DEATH
@@ -138,9 +142,10 @@ with st.container():
 
         fig2 = plt.figure(figsize=(4, 3))
         plt.title('Variant Observation', fontsize=6)
-        plt.plot(x1, y1, '-r', label="Daily Alpha-Beta-Gamma", alpha=1 ,linewidth=1)
-        plt.plot(x2, y2, '-b', label="Daily Delta", alpha=1, linewidth=1)
-        plt.plot(x3, y3, '-g', label="Daily Omicron", alpha=1, linewidth=1)
+        plt.plot(x1, y1, '-g', label="Daily Alpha-Beta-Gamma",
+                 alpha=1, linewidth=0.5)
+        plt.plot(x2, y2, '-r', label="Daily Delta", alpha=1, linewidth=0.5)
+        plt.plot(x3, y3, '-b', label="Daily Omicron", alpha=1, linewidth=0.5)
         plt.xlabel('Day', fontsize=sizefont)
         plt.ylabel(labely, fontsize=sizefont)
         plt.legend(fontsize=sizefont)
@@ -148,3 +153,71 @@ with st.container():
         plt.yticks(fontsize=sizefont)
         st.pyplot(fig2)
 
+# pie chart
+with st.container():
+    st.header('VARIANT IN PERCENTAGE')
+
+    varnames = ['Alpha-Beta-Gamma', 'Delta', 'Omicron']
+    value4positive = [covid_ABG.JKT_DAILY_POSITIVE.sum(),
+                      covid_Delta.JKT_DAILY_POSITIVE.sum(),
+                      covid_Omicron.JKT_DAILY_POSITIVE.sum()]
+    value4death = [covid_ABG.JKT_DAILY_DEATH.sum(),
+                   covid_Delta.JKT_DAILY_DEATH.sum(),
+                   covid_Omicron.JKT_DAILY_DEATH.sum()]
+    value4hospitalize = [covid_ABG.JKT_DAILY_HOSPITALIZED.sum(),
+                         covid_Delta.JKT_DAILY_HOSPITALIZED.sum(),
+                         covid_Omicron.JKT_DAILY_HOSPITALIZED.sum()]
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        fig3 = plt.figure(figsize=(4, 3))
+        plt.pie(value4positive, wedgeprops=dict(
+            width=0.4, edgecolor='w'), labels=varnames)
+        st.pyplot(fig3)
+
+    with col2:
+        fig4 = plt.figure(figsize=(4, 3))
+        plt.pie(value4death, wedgeprops=dict(
+            width=0.4, edgecolor='w'), labels=varnames)
+        st.pyplot(fig4)
+
+    with col3:
+        fig5 = plt.figure(figsize=(4, 3))
+        plt.pie(value4hospitalize, wedgeprops=dict(
+            width=0.4, edgecolor='w'), labels=varnames)
+        st.pyplot(fig5)
+
+# count plot and box plot
+with st.container():
+    st.header('BOXPLOT OF VARIANT AND COUNT PLOT OF RISK')
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        fig6 = plt.figure(figsize=(4, 3))
+        sns.boxplot(x="Variant_Suspect",
+                    y="JKT_DAILY_POSITIVE", data=datacovid)
+        plt.xlabel('Variant', fontsize=sizefont+1)
+        plt.ylabel('Daily Positive', fontsize=sizefont+1)
+        plt.xticks(fontsize=sizefont+1)
+        plt.yticks(fontsize=sizefont+1)
+        st.pyplot(fig6)
+
+    with col2:
+        fig7 = plt.figure(figsize=(4, 3))
+        sns.countplot(x="Variant_Suspect", hue="Risk_Criteria", data=datacovid)
+        plt.xlabel('Variant', fontsize=sizefont+1)
+        plt.ylabel('Count of Risk Level', fontsize=sizefont+1)
+        plt.legend(fontsize=sizefont+1)
+        plt.xticks(fontsize=sizefont+1)
+        plt.yticks(fontsize=sizefont+1)
+        st.pyplot(fig7)
+
+    with col3:
+        fig8 = plt.figure(figsize=(4, 3))
+        sns.boxplot(x="Variant_Suspect", y="JKT_DAILY_DEATH", data=datacovid)
+        plt.xlabel('Variant', fontsize=sizefont+1)
+        plt.ylabel('Daily Death', fontsize=sizefont+1)
+        plt.xticks(fontsize=sizefont+1)
+        plt.yticks(fontsize=sizefont+1)
+        st.pyplot(fig8)
