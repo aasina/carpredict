@@ -142,10 +142,10 @@ with st.container():
 
         fig2 = plt.figure(figsize=(4, 3))
         plt.title('Variant Observation', fontsize=6)
-        plt.plot(x1, y1, '-g', label="Daily Alpha-Beta-Gamma",
+        plt.plot(x1, y1, '-b', label="Daily Alpha-Beta-Gamma",
                  alpha=1, linewidth=0.5)
-        plt.plot(x2, y2, '-r', label="Daily Delta", alpha=1, linewidth=0.5)
-        plt.plot(x3, y3, '-b', label="Daily Omicron", alpha=1, linewidth=0.5)
+        plt.plot(x2, y2, '-y', label="Daily Delta", alpha=1, linewidth=0.5)
+        plt.plot(x3, y3, '-g', label="Daily Omicron", alpha=1, linewidth=0.5)
         plt.xlabel('Day', fontsize=sizefont)
         plt.ylabel(labely, fontsize=sizefont)
         plt.legend(fontsize=sizefont)
@@ -173,19 +173,23 @@ with st.container():
     with col1:
         fig3 = plt.figure(figsize=(4, 3))
         plt.pie(value4positive, wedgeprops=dict(
-            width=0.4, edgecolor='w'), labels=varnames)
+            width=0.7, edgecolor='w'), autopct='%1.1f%%', labels=varnames)
+        plt.title('Composition Overall Positive')
         st.pyplot(fig3)
 
     with col2:
         fig4 = plt.figure(figsize=(4, 3))
+        explode = (0, 0.1, 0)
         plt.pie(value4death, wedgeprops=dict(
-            width=0.4, edgecolor='w'), labels=varnames)
+            width=0.7, edgecolor='w'), autopct='%1.1f%%', explode=explode, labels=varnames, shadow=True, startangle=30)
+        plt.title('Composition Overall Death')
         st.pyplot(fig4)
 
     with col3:
         fig5 = plt.figure(figsize=(4, 3))
         plt.pie(value4hospitalize, wedgeprops=dict(
-            width=0.4, edgecolor='w'), labels=varnames)
+            width=0.7, edgecolor='w'), autopct='%1.1f%%', labels=varnames)
+        plt.title('Composition Overall Hospitalized')
         st.pyplot(fig5)
 
 # count plot and box plot
@@ -221,3 +225,8 @@ with st.container():
         plt.xticks(fontsize=sizefont+1)
         plt.yticks(fontsize=sizefont+1)
         st.pyplot(fig8)
+
+# correlation heat map
+with st.container():
+    st.header('BOXPLOT OF VARIANT AND COUNT PLOT OF RISK')
+    col1, col2, col3 = st.columns(3)

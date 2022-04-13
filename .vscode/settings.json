@@ -1,3 +1,4 @@
 {
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "python.pythonPath": "C:\\Users\\msulaeman\\Miniconda3\\envs\\sandboxML\\python.exe"
 }
