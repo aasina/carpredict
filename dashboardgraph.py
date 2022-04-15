@@ -144,7 +144,7 @@ with st.container():
         plt.title('Variant Observation', fontsize=6)
         plt.plot(x1, y1, '-b', label="Daily Alpha-Beta-Gamma",
                  alpha=1, linewidth=0.5)
-        plt.plot(x2, y2, '-y', label="Daily Delta", alpha=1, linewidth=0.5)
+        plt.plot(x2, y2, '-r', label="Daily Delta", alpha=1, linewidth=0.5)
         plt.plot(x3, y3, '-g', label="Daily Omicron", alpha=1, linewidth=0.5)
         plt.xlabel('Day', fontsize=sizefont)
         plt.ylabel(labely, fontsize=sizefont)
