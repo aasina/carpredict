@@ -13,12 +13,16 @@ st.set_page_config(layout="wide")
 datacovid = pd.read_excel('datasetcovidjktid.xlsx')
 
 # Dataset selection
+covid_JKT = datacovid.loc[:,['Variant_Suspect','Day','JKT_DAILY_POSITIVE','JKT_DAILY_DEATH','JKT_DAILY_HOSPITALIZED',       'JKT_DAILY_POSTRATE','JKT_DAILY_TESTED','Risk','Risk_Criteria']]
 covid_ABG = datacovid.loc[datacovid.Variant_Suspect == 'Alpha-Beta-Gamma', ['Day', 'JKT_DAILY_POSITIVE',
                                                                             'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED', 'JKT_DAILY_POSTRATE', 'JKT_DAILY_TESTED', 'Risk', 'Risk_Criteria']]
 covid_Delta = datacovid.loc[datacovid.Variant_Suspect == 'Delta', ['Day', 'JKT_DAILY_POSITIVE',
                                                                    'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED', 'JKT_DAILY_POSTRATE', 'JKT_DAILY_TESTED', 'Risk', 'Risk_Criteria']]
 covid_Omicron = datacovid.loc[datacovid.Variant_Suspect == 'Omicron', ['Day', 'JKT_DAILY_POSITIVE',
                                                                        'JKT_DAILY_DEATH', 'JKT_DAILY_HOSPITALIZED', 'JKT_DAILY_POSTRATE', 'JKT_DAILY_TESTED', 'Risk', 'Risk_Criteria']]
+
+#Ticks for heatmaps and pairplot
+ticks =['Day','Daily Positive','Daily Death','Daily Hospitalized','Daily Positivity Rate','Daily Tested','Risk']
 
 # Title
 with st.container():
@@ -142,10 +146,9 @@ with st.container():
 
         fig2 = plt.figure(figsize=(4, 3))
         plt.title('Variant Observation', fontsize=6)
-        plt.plot(x1, y1, '-b', label="Daily Alpha-Beta-Gamma",
-                 alpha=1, linewidth=0.5)
-        plt.plot(x2, y2, '-r', label="Daily Delta", alpha=1, linewidth=0.5)
-        plt.plot(x3, y3, '-g', label="Daily Omicron", alpha=1, linewidth=0.5)
+        plt.fill_between(x1, y1, 'b', label="Daily Alpha-Beta-Gamma", alpha=1, linewidth=0.5)
+        plt.fill_between(x2, y2, 'r', label="Daily Delta", alpha=0.7, linewidth=0.5)
+        plt.fill_between(x3, y3, 'g', label="Daily Omicron", alpha=0.6, linewidth=0.5)
         plt.xlabel('Day', fontsize=sizefont)
         plt.ylabel(labely, fontsize=sizefont)
         plt.legend(fontsize=sizefont)
@@ -172,30 +175,29 @@ with st.container():
 
     with col1:
         fig3 = plt.figure(figsize=(4, 3))
-        plt.pie(value4positive, wedgeprops=dict(
-            width=0.7, edgecolor='w'), autopct='%1.1f%%', labels=varnames)
+        explode = (0.05, 0.05, 0.05)
+        plt.pie(value4positive, wedgeprops=dict(width=0.7, edgecolor='w'), autopct='%1.1f%%', explode=explode, labels=varnames, shadow=True, startangle=30)
         plt.title('Composition Overall Positive')
         st.pyplot(fig3)
 
     with col2:
         fig4 = plt.figure(figsize=(4, 3))
-        explode = (0, 0.1, 0)
-        plt.pie(value4death, wedgeprops=dict(
-            width=0.7, edgecolor='w'), autopct='%1.1f%%', explode=explode, labels=varnames, shadow=True, startangle=30)
+        explode = (0.05, 0.05, 0.05)
+        plt.pie(value4death, wedgeprops=dict(width=0.7, edgecolor='w'), autopct='%1.1f%%', explode=explode, labels=varnames, shadow=True, startangle=30)
         plt.title('Composition Overall Death')
         st.pyplot(fig4)
 
     with col3:
         fig5 = plt.figure(figsize=(4, 3))
-        plt.pie(value4hospitalize, wedgeprops=dict(
-            width=0.7, edgecolor='w'), autopct='%1.1f%%', labels=varnames)
+        explode = (0.05, 0.05, 0.05)
+        plt.pie(value4hospitalize, wedgeprops=dict(width=0.7, edgecolor='w'), autopct='%1.1f%%', explode=explode, labels=varnames, shadow=True, startangle=30)
         plt.title('Composition Overall Hospitalized')
         st.pyplot(fig5)
 
 # count plot and box plot
 with st.container():
     st.header('BOXPLOT OF VARIANT AND COUNT PLOT OF RISK')
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     with col1:
         fig6 = plt.figure(figsize=(4, 3))
@@ -209,24 +211,43 @@ with st.container():
 
     with col2:
         fig7 = plt.figure(figsize=(4, 3))
-        sns.countplot(x="Variant_Suspect", hue="Risk_Criteria", data=datacovid)
-        plt.xlabel('Variant', fontsize=sizefont+1)
-        plt.ylabel('Count of Risk Level', fontsize=sizefont+1)
-        plt.legend(fontsize=sizefont+1)
-        plt.xticks(fontsize=sizefont+1)
-        plt.yticks(fontsize=sizefont+1)
-        st.pyplot(fig7)
-
-    with col3:
-        fig8 = plt.figure(figsize=(4, 3))
         sns.boxplot(x="Variant_Suspect", y="JKT_DAILY_DEATH", data=datacovid)
         plt.xlabel('Variant', fontsize=sizefont+1)
         plt.ylabel('Daily Death', fontsize=sizefont+1)
         plt.xticks(fontsize=sizefont+1)
         plt.yticks(fontsize=sizefont+1)
-        st.pyplot(fig8)
+        st.pyplot(fig7)
 
 # correlation heat map
 with st.container():
-    st.header('BOXPLOT OF VARIANT AND COUNT PLOT OF RISK')
-    col1, col2, col3 = st.columns(3)
+    st.header('CORRELATION HEATMAP')
+    col1, col2 = st.columns(2)
+
+    #create correlation
+    corrdata_Delta = covid_Delta.corr()
+    corrdata_Omicron = covid_Omicron.corr()
+
+    with col1:
+        fig8 = plt.figure()
+        sns.heatmap(corrdata_Delta, annot=True, xticklabels=ticks, yticklabels=ticks)
+        st.pyplot(fig8)
+
+    with col2:
+        fig9 = plt.figure()
+        sns.heatmap(corrdata_Omicron, annot=True, xticklabels=ticks, yticklabels=ticks)
+        st.pyplot(fig9)
+
+    st.write('')
+
+# Show pair plot
+
+st.header('PAIR PLOT GRAPH ')
+
+show_pairplot = st.checkbox('Show Pair Plot Graph')
+
+if show_pairplot:
+    fig10 = sns.pairplot(covid_JKT, hue='Variant_Suspect')
+    handles = fig10._legend_data.values()
+    labels = fig10._legend_data.keys()
+    st.pyplot(fig10)
+    
